@@ -256,42 +256,85 @@ def process_inline_formatting(para, text):
 
 def process_bold_italic(para, text):
     """Process bold (**text**) and italic (*text*) formatting"""
-    # Process in stages: first bold, then italic, then regular text
-    # This avoids conflicts between ** and *
+    # Process text character by character, tracking bold and italic state
+    # This handles nested and mixed formatting correctly
     
-    # Stage 1: Mark bold sections with a placeholder
-    bold_placeholders = {}
-    placeholder_counter = 0
+    i = 0
+    current_text = ""
+    in_bold = False
+    in_italic = False
+    in_code = False
     
-    def replace_bold(match):
-        nonlocal placeholder_counter
-        placeholder = f"__BOLD_{placeholder_counter}__"
-        bold_placeholders[placeholder] = match.group(1)  # Store the text without **
-        placeholder_counter += 1
-        return placeholder
+    while i < len(text):
+        # Check for inline code first (has priority)
+        if text[i] == '`' and i + 1 < len(text) and text[i+1] != '`':
+            # Flush current text
+            if current_text:
+                run = para.add_run(current_text)
+                if in_bold:
+                    run.bold = True
+                if in_italic:
+                    run.italic = True
+                run.font.name = 'Garamond'
+                current_text = ""
+            
+            # Find end of code
+            end_code = text.find('`', i + 1)
+            if end_code != -1:
+                code_text = text[i+1:end_code]
+                run = para.add_run(code_text)
+                run.font.name = 'Courier New'
+                run.font.size = Pt(10)
+                i = end_code + 1
+                continue
+        
+        # Check for bold (**text**)
+        elif text[i:i+2] == '**' and not in_code:
+            # Flush current text before changing state
+            if current_text:
+                run = para.add_run(current_text)
+                if in_bold:
+                    run.bold = True
+                if in_italic:
+                    run.italic = True
+                run.font.name = 'Garamond'
+                current_text = ""
+            
+            # Toggle bold state
+            in_bold = not in_bold
+            i += 2
+            continue
+        
+        # Check for italic (*text*) - but not if it's part of **
+        elif text[i] == '*' and not in_code and (i == 0 or text[i-1] != '*') and (i+1 >= len(text) or text[i+1] != '*'):
+            # Flush current text before changing state
+            if current_text:
+                run = para.add_run(current_text)
+                if in_bold:
+                    run.bold = True
+                if in_italic:
+                    run.italic = True
+                run.font.name = 'Garamond'
+                current_text = ""
+            
+            # Toggle italic state
+            in_italic = not in_italic
+            i += 1
+            continue
+        
+        else:
+            # Regular character - add to current text
+            current_text += text[i]
+            i += 1
     
-    # Replace all **text** with placeholders
-    text_with_placeholders = re.sub(r'\*\*([^\*]+?)\*\*', replace_bold, text)
-    
-    # Stage 2: Process the text with placeholders, handling italic
-    parts = re.split(r'(\*[^\*]+?\*)', text_with_placeholders)
-    
-    for part in parts:
-        if part.startswith('__BOLD_') and part.endswith('__'):
-            # This is a bold placeholder
-            bold_text = bold_placeholders.get(part, part)
-            run = para.add_run(bold_text)
+    # Flush any remaining text
+    if current_text:
+        run = para.add_run(current_text)
+        if in_bold:
             run.bold = True
-            run.font.name = 'Garamond'
-        elif part.startswith('*') and part.endswith('*') and len(part) > 2:
-            # Italic text (single asterisks)
-            italic_text = part[1:-1]
-            run = para.add_run(italic_text)
+        if in_italic:
             run.italic = True
-            run.font.name = 'Garamond'
-        elif part:
-            # Regular text
-            para.add_run(part)
+        run.font.name = 'Garamond'
 
 if __name__ == '__main__':
     md_file = Path('Book/Complete_Shadow_AI_Detection_Book_CREDIBLE.md')
