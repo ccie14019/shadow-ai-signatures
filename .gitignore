@@ -1,0 +1,125 @@
+# Book and publishing materials (not for public repo)
+Book/
+*.docx
+*.pdf
+kdp_*.txt
+
+# PCAP files (can be large)
+pcaps/
+*.pcap
+*.pcapng
+*.cap
+
+# Logs
+logs/
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.code-workspace
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Test outputs
+test_outputs/
+*.pcap
+*.pcapng
+
+# Backup files
+*.bak
+*.backup
+backup_*.tar.gz
+*~
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Documentation that's not ready for public
+*_CRITICAL_ISSUES.md
+*_REVIEW*.md
+*_STATUS.md
+*_PROGRESS.md
+*_SUMMARY.md
+*_PLAN.md
+*_GUIDE.md
+*_STEPS.md
+*_RESULTS.md
+*_COMPLETE.md
+*_REPORT.md
+*_CAN_DO.md
+
+# Keep only essential docs
+!README.md
+!QUICK_START.md
+!LICENSE
+!CONTRIBUTING.md
+!docs/
+
+# Docker
+.dockerignore
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json

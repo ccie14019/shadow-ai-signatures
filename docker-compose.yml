@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  # Network capture service using tcpdump
+  tcpdump:
+    image: corfr/tcpdump:latest
+    container_name: shadow-ai-capture
+    network_mode: "host"
+    volumes:
+      - ./pcaps:/pcaps
+    command: >
+      sh -c "
+      echo 'Starting tcpdump capture on port 443...' &&
+      tcpdump -i any 'tcp port 443' -w /pcaps/capture_$$(date +%Y%m%d_%H%M%S).pcap -v
+      "
+    restart: "no"
+
+  # Alternative: Use tcpdump with specific interface
+  tcpdump-eth0:
+    image: corfr/tcpdump:latest
+    container_name: shadow-ai-capture-eth0
+    network_mode: "host"
+    volumes:
+      - ./pcaps:/pcaps
+    command: >
+      sh -c "
+      echo 'Starting tcpdump on eth0 (port 443)...' &&
+      tcpdump -i eth0 'tcp port 443' -w /pcaps/capture_$$(date +%Y%m%d_%H%M%S).pcap -v
+      "
+    restart: "no"
+    profiles:
+      - eth0
+
