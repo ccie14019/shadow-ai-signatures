@@ -8,6 +8,11 @@ kdp_*.txt
 convert_book_to_docx.py
 generate_kdp_materials.py
 
+# Book chapter corrections and related files
+Chapter_*.md
+*_CORRECTED.md
+*Chapter*.md
+
 # PCAP files (can be large)
 pcaps/
 *.pcap
